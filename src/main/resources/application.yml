@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/DEVBLOG
+    username: root
+    password: 1234
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        format_sql: true
+        show_sql: true
+
+logging:
+  level:
+    org.springframework.web.cors: DEBUG
+    org.springframework.security: DEBUG
+
+
+jwt:
+  secret-Key: e1d758ccf7e52367b761f95b4e02115e71c4b88a22ea0fbc0dbda09ec1e09163
+  token.expired-time-ms: 2592000000
