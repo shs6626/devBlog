@@ -2,77 +2,76 @@ package com.example.devblog.utils.paging;
 
 public class PagingUtils {
 
-    public static PagingInfo getPagingInfo(String currentPage_, String pageSize_, int totalRowCnt) {
-        // 1. @RequestParam 값 유효성 검사
+    public static PagingInfo getPagingInfo(String currentPage_, String pageSize_, long totalRowDataCnt) {
+        /* STEP 1*/
+        int pageBlockCnt = 10; // 개발자가 정하면 됨
         int pageSize = checkPageSizeValidation(pageSize_);
-        int pageCnt = 5; // 보여줄 - [1] [2] [3] [4] [5] 개수
-        int totalPageCnt = calTotalPageCnt(totalRowCnt, pageSize); // [1] [2] [3] .... [14]
-        // 현재 페이지 방어 로직
-        int currentPage = checkCurrentPageValidation(Integer.parseInt(currentPage_), totalPageCnt);
+        int totalPageBlockCnt = calTotalPageBlockCnt(totalRowDataCnt, pageSize);
+        int currentPage = checkCurrentPageValidation(Integer.parseInt(currentPage_), totalPageBlockCnt);
+        /* STEP 2 */
+        int endPageBlock = calEndPageBlock(currentPage, pageBlockCnt, totalPageBlockCnt);
+        int startPageBlock = calStartPageBlock(endPageBlock, pageBlockCnt);
+        // 유효성 검사를 더 늦게 해줘야 함
+        endPageBlock = checkEndPageBlockValidation(currentPage, pageBlockCnt);
+        boolean next = (endPageBlock == totalPageBlockCnt);
 
-        int endPage = calEndPage(currentPage, pageCnt, totalPageCnt);
-        int startPage = calStartPage(endPage, pageCnt);
+        startPageBlock = checkStartPageBlockValidation(endPageBlock);
+        boolean prev = (startPageBlock == 1);
+        /* STEP 3 */
+        int startRowDataNum = (currentPage-1) * pageSize + 1;
+        int endRowDataNum = startRowDataNum + pageSize -1;
 
-        int startNum = (currentPage-1) * pageSize + 1;
-        int endNum = startNum + pageSize - 1;
-
-        return PagingInfo.builder()
-                .pageSize(String.valueOf(pageSize))
-                .currentPage(String.valueOf(currentPage))
-                .endPage(String.valueOf(endPage))
-                .startPage(String.valueOf(startPage))
-                .startNum(String.valueOf(startNum))
-                .endNum(String.valueOf(endNum))
-                .build();
+        return new PagingInfo(
+                pageSize,
+                currentPage,
+                startPageBlock,
+                endPageBlock,
+                startRowDataNum,
+                endRowDataNum,
+                prev,
+                next
+        );
     }
 
+    // pageSize(한 페이지 당 보여줄 entity 개수) -- 몇 개 보여줄 것인지 개발자가 정하고 나머지는 디폴트 값을 뿌리기
     private static int checkPageSizeValidation(String pageSize) {
-        if ("5".equals(pageSize) || "10".equals(pageSize) || "50".equals(pageSize)) {
+        // pageSize 조절 -- default값은 10
+        if ("10".equals(pageSize) || "30".equals(pageSize) || "50".equals(pageSize)) {
             return Integer.parseInt(pageSize);
         }
-        return 10; // default 값 10
+        return 10;
     }
 
-    private static int checkCurrentPageValidation(int currentPage, int totalPageCnt) {
-        if (currentPage > totalPageCnt)
-            currentPage = totalPageCnt;
+    private static int checkCurrentPageValidation(int currentPage, int totalPageBlockCnt) {
+        if (currentPage > totalPageBlockCnt)
+            currentPage = totalPageBlockCnt;
         else if (currentPage < 1)
             currentPage = 1;
 
         return currentPage;
     }
 
-    private static int calTotalPageCnt(int totalRowCnt, int pageSize) {
-        if (totalRowCnt == 0) {
+    private static int calTotalPageBlockCnt(long totalRowDataCnt, int pageSize) {
+        if (totalRowDataCnt == 0) {
             return 1;
         }
-        return (totalRowCnt % pageSize == 0) ? totalRowCnt / pageSize : totalRowCnt / pageSize + 1;
+        return (int)(totalRowDataCnt + pageSize - 1) / pageSize;
     }
 
-    private static int calEndPage(int currentPage, int pageCnt , int totalPageCnt) {
-        int endPage = (int)Math.ceil((double) currentPage/pageCnt) * pageCnt;
-
-        return checkEndPageValidation(endPage, totalPageCnt);
+    private static int calEndPageBlock(int currentPage, int pageBlockCnt , int totalPageBlockCnt) {
+        return ((currentPage + pageBlockCnt - 1) / pageBlockCnt) * pageBlockCnt;
     }
 
-    private static int checkEndPageValidation(int endPage, int totalPageCnt) {
-        if (endPage > totalPageCnt)
-            endPage = totalPageCnt;
-
-        return endPage;
+    private static int checkEndPageBlockValidation(int endPageBlock, int totalPageBlockCnt) {
+        return Math.min(endPageBlock, totalPageBlockCnt);
     }
 
-    private static int calStartPage(int endPage, int pageCnt) {
-        int startPage = endPage - pageCnt + 1;
-
-        return checkStartPageValidation(startPage);
+    private static int calStartPageBlock(int endPageBlock, int totalPageBlockCnt) {
+        return endPageBlock - totalPageBlockCnt + 1;
     }
 
-    private static int checkStartPageValidation(int startPage) {
-        if (startPage < 1) {
-            startPage = 1;
-        }
-        return startPage;
+    private static int checkStartPageBlockValidation(int startPageBlock) {
+        return Math.max(startPageBlock, 1);
     }
 
 }

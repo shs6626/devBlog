@@ -1,17 +1,20 @@
 package com.example.devblog.utils.paging;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class PagingInfo {
 
-    private String pageSize;
-    private String currentPage;
-    private String startPage;
-    private String endPage;
-    private String startNum;
-    private String endNum;
+    private int pageSize;
+    private int currentPage;
+    private int startPageBlock;
+    private int endPageBlock;
+    private int startRowDataNum;
+    private int endRowDataNum;
+    private boolean prev;
+    private boolean next;
 
 }
