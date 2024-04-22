@@ -7,13 +7,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByIdAndDeletedAtIsNull(Long postId);
-
-    Page<Post> findAllByDeletedAtNull(Pageable pageable);
 
     @Modifying
     @Query(value = """
@@ -23,5 +24,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """,
            nativeQuery = true)
     void deletePostById(long postId);
+
+    @Query(value = """
+              SELECT *
+              FROM POST
+              WHERE DELETED_AT IS NULL
+                AND TITLE LIKE CONCAT('%', :searchKeyword, '%')
+              ORDER BY :sort DESC
+              LIMIT :startRowDataNum, :pageSize
+            """,
+           nativeQuery = true)
+    List<Post> findAllWithPaging(@Param("startRowDataNum") int startRowDataNum,
+                                 @Param("pageSize") int pageSize,
+                                 @Param("searchKeyword") String searchKeyword,
+                                 @Param("sort") String sortBy);
 
 }

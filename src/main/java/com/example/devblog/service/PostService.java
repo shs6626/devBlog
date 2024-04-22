@@ -6,11 +6,15 @@ import com.example.devblog.repository.PostCommentRepository;
 import com.example.devblog.repository.PostRepository;
 import com.example.devblog.utils.error.DevBlogException;
 import com.example.devblog.utils.error.ExceptionCode;
+import com.example.devblog.utils.paging.PagingInfo;
+import com.example.devblog.utils.paging.PagingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +26,13 @@ public class PostService {
 
     /** 게시글 목록 조회 */
     @Transactional(readOnly = true)
-    public Page<PostDto> getPostList(Pageable pageable) {
+    public PostListDto getPostList(String currentPage, String pageSize, String sort, String searchKeyword) {
+        long totalRowDataCnt = postRepository.count();
+        PagingInfo pagingInfo = PagingUtils.getPagingInfo(currentPage, pageSize, totalRowDataCnt);
         // 접근 권한이 있는지 확인해야함
-        return postRepository.findAllByDeletedAtNull(pageable).map(PostDto::from);
+        List<Post> postList = postRepository.findAllWithPaging(pagingInfo.getStartRowDataNum(), pagingInfo.getPageSize(), searchKeyword, sort);
+
+        return PostListDto.of(postList.stream().map(PostDto::from).toList(), pagingInfo);
     }
 
     /** 게시글 상세 조회 */

@@ -3,15 +3,13 @@ package com.example.devblog.controller;
 import com.example.devblog.controller.request.PostSaveRequest;
 import com.example.devblog.controller.request.PostUpdateRequest;
 import com.example.devblog.controller.response.*;
-import com.example.devblog.domain.dto.*;
+import com.example.devblog.domain.dto.PostCommentDto;
+import com.example.devblog.domain.dto.PostDto;
 import com.example.devblog.service.PostCommentService;
 import com.example.devblog.service.PostService;
 import com.example.devblog.utils.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/post")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class PostController {
 
     private final PostService postService;
@@ -30,10 +29,7 @@ public class PostController {
                                                    @RequestParam(defaultValue = "10", required = false) String pageSize,
                                                    @RequestParam(defaultValue = "createdAt", required = false) String sort,
                                                    @RequestParam(defaultValue = "", required = false) String searchKeyword) {
-        System.out.println(currentPage);
-        System.out.println(pageSize);
-        Pageable pageable = PageRequest.of(Integer.parseInt(currentPage), Integer.parseInt(pageSize), Sort.by(sort).descending());
-        return ApiResult.success(new PostListResponse(postService.getPostList(pageable)));
+        return ApiResult.success(new PostListResponse(postService.getPostList(currentPage, pageSize, sort, searchKeyword)));
     }
 
     /** 게시글 상세 조회 */
@@ -66,9 +62,7 @@ public class PostController {
     @DeleteMapping("/{post_id}")
     public ApiResult<PostDeleteResponse> deletePost(@PathVariable(value = "post_id") Long postId) {
         postService.deletePost(postId);
-
-        Pageable pageable = PageRequest.of(1,10,Sort.by("createdAt").descending());
-        return ApiResult.success(new PostDeleteResponse(postService.getPostList(pageable)));
+        return ApiResult.success(new PostDeleteResponse(postService.getPostList("1", "10", "createdAt", "")));
     }
 
 }
