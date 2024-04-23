@@ -15,9 +15,9 @@ spring:
 
 logging:
   level:
-    org.springframework.web.cors: DEBUG
-    org.springframework.security: DEBUG
-
+    org.springframework.web.cors: INFO
+    org.springframework.security: INFO
+#    org.hibernate.type.descriptor.sql: trace
 
 jwt:
   secret-Key: e1d758ccf7e52367b761f95b4e02115e71c4b88a22ea0fbc0dbda09ec1e09163
