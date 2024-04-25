@@ -14,6 +14,8 @@ public class PagingInfo {
     private int endPageBlock;
     private int startRowDataNum;
     private int endRowDataNum;
+    private int totalPageBlockCnt;
+    private long totalRowDataCnt;
     private boolean prev;
     private boolean next;
 

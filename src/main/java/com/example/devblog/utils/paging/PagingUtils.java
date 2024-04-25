@@ -3,21 +3,21 @@ package com.example.devblog.utils.paging;
 public class PagingUtils {
 
     public static PagingInfo getPagingInfo(String currentPage_, String pageSize_, long totalRowDataCnt) {
-        /* STEP 1*/
+        /** STEP 1 */
         int pageBlockCnt = 10; // 개발자가 정하면 됨
         int pageSize = checkPageSizeValidation(pageSize_);
         int totalPageBlockCnt = calTotalPageBlockCnt(totalRowDataCnt, pageSize);
         int currentPage = checkCurrentPageValidation(Integer.parseInt(currentPage_), totalPageBlockCnt);
-        /* STEP 2 */
+        /** STEP 2 */
         int endPageBlock = calEndPageBlock(currentPage, pageBlockCnt);
         int startPageBlock = calStartPageBlock(endPageBlock, pageBlockCnt);
         // 유효성 검사를 더 늦게 해줘야 함
-        endPageBlock = checkEndPageBlockValidation(endPageBlock, pageBlockCnt);
+        endPageBlock = checkEndPageBlockValidation(endPageBlock, totalPageBlockCnt);
         boolean next = (currentPage != totalPageBlockCnt);
 
         startPageBlock = checkStartPageBlockValidation(startPageBlock);
         boolean prev = (currentPage != 1);
-        /* STEP 3 */
+        /** STEP 3 */
         int startRowDataNum = (currentPage-1) * pageSize + 1;
         int endRowDataNum = startRowDataNum + pageSize -1;
 
@@ -28,6 +28,8 @@ public class PagingUtils {
                 endPageBlock,
                 startRowDataNum,
                 endRowDataNum,
+                totalPageBlockCnt,
+                totalRowDataCnt,
                 prev,
                 next
         );

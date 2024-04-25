@@ -10,16 +10,11 @@ import com.example.devblog.utils.error.ExceptionCode;
 import com.example.devblog.utils.paging.PagingInfo;
 import com.example.devblog.utils.paging.PagingUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -30,26 +25,20 @@ public class PostService {
 
     /** 게시글 목록 조회 */
     @Transactional(readOnly = true)
-    public PostListDto getPostList(String currentPage, String pageSize, String searchKeyword) {
-        long totalRowDataCnt = postRepository.countByDeletedAtIsNull();
-        PagingInfo pagingInfo = PagingUtils.getPagingInfo(currentPage, pageSize, totalRowDataCnt);
-
+    public PostListDto getPostList(String currentPage, String pageSize, String sort, String searchKeyword) {
         // 접근 권한이 있는지 확인해야함
-        int startRowDataNum = pagingInfo.getStartRowDataNum()-1;
-        int pageSize_ = pagingInfo.getPageSize();
 
-        List<Post> postList;
-        if (searchKeyword == null || searchKeyword.isBlank()) {
-            postList = postRepository.findAllWithPaging(startRowDataNum, pageSize_);
-        } else {
-            postList = postRepository.findBySearchKewordWithPaging(startRowDataNum,pageSize_,searchKeyword);
-        }
+        // Paging 처리
+        long totalRowDataCnt;
+        if (searchKeyword == null || searchKeyword.isBlank())
+            totalRowDataCnt = postRepository.countByDeletedAtIsNull();
+        else
+            totalRowDataCnt = postRepository.countDeletedAtIsNullContains(searchKeyword);
+
+        PagingInfo pagingInfo = PagingUtils.getPagingInfo(currentPage, pageSize, totalRowDataCnt);
+        List<Post> postList = postRepository.findAllWithPaging(pagingInfo.getStartRowDataNum()-1, pagingInfo.getPageSize());
+
         return PostListDto.of(postList.stream().map(PostDto::from).toList(), pagingInfo);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<Post> getPostList2(Pageable pageable, String searchKeyword) {
-        return postRepository.findByDeletedAtIsNull(pageable);
     }
 
     /** 게시글 상세 조회 */
