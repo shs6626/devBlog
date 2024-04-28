@@ -12,31 +12,15 @@ public interface PostCommentRepository extends JpaRepository<PostComment, Long> 
 
     List<PostComment> findByPostIdAndDeletedAtIsNull(Long postId);
 
-    @Modifying
-    @Query(value = """
-             UPDATE POST_COMMENT
-             SET DELETED_AT = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
-             WHERE POST_COMMENT_ID = :postCommentId
-            """,
-            nativeQuery = true)
-    void deleteComment(Long postCommentId);
-
-    @Modifying
-    @Query(value = """
-             UPDATE POST_COMMENT
-             SET DELETED_AT = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
-             WHERE POST_ID = :postId
-            """,
-            nativeQuery = true)
-    void deletePostCommentByPostId(long postId);
-
-    @Query(value = """
-             SELECT *
-             FROM POST_COMMENT
-             WHERE POST_ID = :postId
-               AND POST_COMMENT_ID = :postCommentId
-            """,
-           nativeQuery = true)
     Optional<PostComment> findByPostIdAndPostCommentId(Long postId, Long postCommentId);
+
+    @Modifying
+    @Query(value = """
+            UPDATE POST_COMMENT
+            SET DELETED_AT = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+            WHERE POST_COMMENT_ID = :postCommentId
+           """,
+           nativeQuery = true)
+    void deleteComment(Long postCommentId);
 
 }

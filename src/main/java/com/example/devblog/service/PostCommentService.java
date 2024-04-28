@@ -1,7 +1,6 @@
 package com.example.devblog.service;
 
 import com.example.devblog.domain.dto.PostCommentDto;
-import com.example.devblog.domain.dto.PostDto;
 import com.example.devblog.domain.entity.Post;
 import com.example.devblog.domain.entity.PostComment;
 import com.example.devblog.repository.PostCommentRepository;
@@ -27,23 +26,23 @@ public class PostCommentService {
     @Transactional
     public List<PostCommentDto> getPostComment(Long postId) {
         // TODO : 여기도 Paging 처리 해야되지 않나 ..?
-        return postCommentRepository.findByPostIdAndDeletedAtIsNull(postId).stream().map(PostCommentDto::from).toList();
+        return postCommentRepository.findByPostIdAndDeletedAtIsNull(postId)
+                .stream()
+                .map(PostCommentDto::from).toList();
     }
 
     /** Post Comment 저장하기 */
-    public List<PostCommentDto> savePostComment(Long postId, String content) {
+    public void savePostComment(Long postId, String content) {
         // 권한 인증
         // Post 존재여부 확인
         Post postEntity = findPostByPostId(postId);
         // Post Comment 저장
         postCommentRepository.save(PostComment.of(content, postId, "sayya"));
-
-        return postCommentRepository.findByPostIdAndDeletedAtIsNull(postId).stream().map(PostCommentDto::from).toList();
     }
 
     /** Post Comment 수정하기 */
     @Transactional
-    public List<PostCommentDto> updatePostComment(Long postId, Long postCommentId, String comment) {
+    public void updatePostComment(Long postId, Long postCommentId, String comment) {
         // 권한 인증
         // Post 존재여부 확인
         Post postEntity = findPostByPostId(postId);
@@ -53,15 +52,13 @@ public class PostCommentService {
         );
         // Post Comment 수정
         postCommentEntity.setComment(comment);
-
-        return postCommentRepository.findByPostIdAndDeletedAtIsNull(postId).stream().map(PostCommentDto::from).toList();
     }
 
     /**
      * Post Comment 삭제하기
      */
     @Transactional
-    public List<PostCommentDto> deletePostComment(Long postId, Long postCommentId) {
+    public void deletePostComment(Long postId, Long postCommentId) {
         // 권한 인증
         // Post 존재여부 확인
         Post postEntity = findPostByPostId(postId);
@@ -71,8 +68,6 @@ public class PostCommentService {
         );
         // postComment 삭제
         postCommentRepository.deleteComment(postCommentId);
-
-        return postCommentRepository.findByPostIdAndDeletedAtIsNull(postId).stream().map(PostCommentDto::from).toList();
     }
 
     // Post 존재하는지 확인
