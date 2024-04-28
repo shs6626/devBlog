@@ -8,18 +8,20 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        String errorMessage = e.getBindingResult()
-                .getAllErrors()
-                .get(0)
-                .getDefaultMessage();
+    public ApiResult<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        String errorMessage = Objects.requireNonNull(e.getBindingResult()
+                                                      .getFieldError())
+                                                      .getDefaultMessage();
         log.error("[유효성 검사] error: {}", errorMessage);
+
         return ApiResult.error(errorMessage);
     }
 
@@ -27,6 +29,14 @@ public class GlobalExceptionHandler {
     public ApiResult<Void> runtimeExceptionHandler(RuntimeException e) {
         String errorMessage = e.getMessage();
         log.error("[RuntimeException] error: {}", errorMessage);
+
+        return ApiResult.error(errorMessage);
+    }
+
+    @ExceptionHandler(DevBlogException.class)
+    public ApiResult<Void> devBlogExceptionHandler(DevBlogException e) {
+        String errorMessage = e.getMessage();
+        log.error("[DevBlogException] error: {}", errorMessage);
 
         return ApiResult.error(errorMessage);
     }
