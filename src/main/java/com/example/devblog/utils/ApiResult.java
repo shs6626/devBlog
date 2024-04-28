@@ -10,7 +10,7 @@ import lombok.*;
 public class ApiResult<T> {
 
     private String returnMessage;
-    private T info;
+    private T responseData;
 
     public static <T> ApiResult<T> success() {
         return new ApiResult<>("SUCCESS", null);
