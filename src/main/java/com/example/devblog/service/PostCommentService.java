@@ -26,7 +26,7 @@ public class PostCommentService {
     @Transactional
     public List<PostCommentDto> getPostComment(Long postId) {
         // TODO : 여기도 Paging 처리 해야되지 않나 ..?
-        return postCommentRepository.findByPostIdAndDeletedAtIsNull(postId)
+        return postCommentRepository.findByPostIdAndDeletedAtIsNullOrderByCreatedAtAsc(postId)
                 .stream()
                 .map(PostCommentDto::from).toList();
     }
@@ -66,7 +66,6 @@ public class PostCommentService {
         PostComment postCommentEntity = postCommentRepository.findByPostIdAndIdAndDeletedAtIsNull(postId, postCommentId).orElseThrow(() ->
                 new DevBlogException(ExceptionCode.POST_COMMENT_NOT_FOUND)
         );
-
         // postComment 삭제
         postCommentRepository.deleteComment(postCommentId);
     }

@@ -24,17 +24,27 @@ public class PostComment {
     @Column(length = 14) private String updatedAt;
     @Column(length = 14) private String deletedAt;
 
+    @PrePersist
+    public void setCreatedAt() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        this.createdAt = currentDateTime.format(formatter);
+    }
+
+    @PreUpdate
+    public void setUpdatedAt() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        this.updatedAt = currentDateTime.format(formatter);
+    }
+
 
     protected PostComment() {}
 
     private PostComment(String comment, Long postId, String userId) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
         this.comment = comment;
         this.postId = postId;
         this.userId = userId;
-        this.createdAt = currentDateTime.format(formatter);
     }
 
     public static PostComment of(String comment, Long postId, String userId) {
