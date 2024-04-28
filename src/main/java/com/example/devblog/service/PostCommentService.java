@@ -47,7 +47,7 @@ public class PostCommentService {
         // Post 존재여부 확인
         Post postEntity = findPostByPostId(postId);
         // Post Comment 존재 여부 확인
-        PostComment postCommentEntity = postCommentRepository.findByPostIdAndPostCommentId(postId, postCommentId).orElseThrow(() ->
+        PostComment postCommentEntity = postCommentRepository.findByPostIdAndId(postId, postCommentId).orElseThrow(() ->
                 new DevBlogException(ExceptionCode.POST_COMMENT_NOT_FOUND)
         );
         // Post Comment 수정
@@ -63,7 +63,7 @@ public class PostCommentService {
         // Post 존재여부 확인
         Post postEntity = findPostByPostId(postId);
         // Post Comment 존재 여부 확인
-        PostComment postCommentEntity = postCommentRepository.findByPostIdAndPostCommentId(postId, postCommentId).orElseThrow(() ->
+        PostComment postCommentEntity = postCommentRepository.findByPostIdAndId(postId, postCommentId).orElseThrow(() ->
                 new DevBlogException(ExceptionCode.POST_COMMENT_NOT_FOUND)
         );
         // postComment 삭제
@@ -76,6 +76,5 @@ public class PostCommentService {
                 new DevBlogException(ExceptionCode.POST_NOT_FOUND)
         );
     }
-
 
 }
