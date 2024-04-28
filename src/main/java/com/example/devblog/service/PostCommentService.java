@@ -50,7 +50,9 @@ public class PostCommentService {
         PostComment postCommentEntity = postCommentRepository.findByPostIdAndIdAndDeletedAtIsNull(postId, postCommentId).orElseThrow(() ->
                 new DevBlogException(ExceptionCode.POST_COMMENT_NOT_FOUND)
         );
-        // Post Comment 수정
+        if (postCommentEntity.getComment().equals(comment)) {
+            throw new DevBlogException((ExceptionCode.POST_COMMENT_DOES_NOT_BE_CHANGED_ANYTHING));
+        }
         postCommentEntity.setComment(comment);
     }
 

@@ -17,9 +17,11 @@ public enum ExceptionCode {
     // Post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "No Such Post"),
     POST_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"Post Already Exists"),
+    POST_DOES_NOT_BE_CHANGED_ANYTHING(HttpStatus.BAD_REQUEST, "Post Isn't Changed Anything"),
 
     // POST COMMENT
     POST_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "No Such Post Comment"),
+    POST_COMMENT_DOES_NOT_BE_CHANGED_ANYTHING(HttpStatus.BAD_REQUEST, "Post Comment Isn't Changed Anything"),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 

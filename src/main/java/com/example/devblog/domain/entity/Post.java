@@ -24,22 +24,30 @@ public class Post {
     @Column(length = 14) private String updatedAt;
     @Column(length = 14) private String deletedAt;
 
+    @PrePersist
+    public void setCreatedAt() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        this.createdAt = currentDateTime.format(formatter);
+    }
+
+    @PreUpdate
+    public void setUpdatedAt() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        this.updatedAt = currentDateTime.format(formatter);
+    }
 
     protected Post() {}
 
     private Post(String title, String content) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
         this.title = title;
         this.content = content;
         this.userId = "sayya";
-        this.createdAt = currentDateTime.format(formatter);
     }
 
     public static Post of(String title, String content) {
         return new Post(title, content);
     }
-
 
 }

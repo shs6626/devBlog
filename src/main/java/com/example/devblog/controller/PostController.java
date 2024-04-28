@@ -28,9 +28,9 @@ public class PostController {
     @GetMapping
     public ApiResult<PostListDto> getPostList(@RequestParam(defaultValue = "1", required = false) String currentPage,
                                               @RequestParam(defaultValue = "10", required = false) String pageSize,
-                                              @RequestParam(defaultValue = "CREATED_AT", required = false) String sort,
-                                              @RequestParam(defaultValue = "", required = false) String searchKeyword) {
-        return ApiResult.success(postService.getPostList(currentPage, pageSize, sort, searchKeyword));
+                                              @RequestParam(defaultValue = "", required = false) String searchKeyword,
+                                              @RequestParam(defaultValue = "created_at", required = false) String sortBy) {
+        return ApiResult.success(postService.getPostList(currentPage, pageSize, searchKeyword, sortBy));
     }
 
     /** 게시글 상세 조회 */
@@ -51,19 +51,17 @@ public class PostController {
 
     /** 게시글 수정 */
     @PutMapping("/{post_id}")
-    public ApiResult<PostUpdateResponse> updatePost(@PathVariable(value = "post_id") Long postId,
-                                                    @Valid @RequestBody PostUpdateRequest request) {
-        PostDto postDto = postService.updatePost(postId, request.toDto());
-        List<PostCommentDto> postCommentDtoList = postCommentService.getPostComment(postId);
-
-        return ApiResult.success(PostUpdateResponse.from(postDto, postCommentDtoList));
+    public ApiResult<Void> updatePost(@PathVariable(value = "post_id") Long postId,
+                                                    @RequestBody PostUpdateRequest request) {
+        postService.updatePost(postId, request.toDto());
+        return ApiResult.success();
     }
 
     /** 게시글 삭제 */
     @DeleteMapping("/{post_id}")
-    public ApiResult<PostDeleteResponse> deletePost(@PathVariable(value = "post_id") Long postId) {
+    public ApiResult<Void> deletePost(@PathVariable(value = "post_id") Long postId) {
         postService.deletePost(postId);
-        return ApiResult.success(new PostDeleteResponse(postService.getPostList("1", "10", "createdAt", "")));
+        return ApiResult.success();
     }
 
 }
