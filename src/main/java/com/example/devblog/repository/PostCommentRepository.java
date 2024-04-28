@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface PostCommentRepository extends JpaRepository<PostComment, Long> {
 
-    List<PostComment> findByPostIdAndDeletedAtIsNull(Long postId);
+    List<PostComment> findByPostIdAndDeletedAtIsNullOrderByCreatedAtAsc(Long postId);
 
-    Optional<PostComment> findByPostIdAndId(Long postId, Long postCommentId);
+    Optional<PostComment> findByPostIdAndIdAndDeletedAtIsNull(Long postId, Long postCommentId);
 
     @Modifying
     @Query(value = """
