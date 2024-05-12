@@ -1,0 +1,10 @@
+.Header {
+    display: flex;
+    flex-direction: row;
+    background-color: red;
+    gap: 20px;
+}
+
+.Header > h1 {
+    color: red;
+}

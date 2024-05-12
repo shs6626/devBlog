@@ -1,0 +1,32 @@
+.ListItems {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid skyblue;
+}
+
+.ListItems input {
+    width: 20px;
+}
+
+.ListItems .content {
+    flex: 1;
+
+}
+
+.ListItems .date {
+    font-size: 14px;
+    color: gray;
+
+}
+
+.ListItems button {
+    cursor: pointer;
+    color: gray;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+
+}
